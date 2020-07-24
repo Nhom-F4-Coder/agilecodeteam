@@ -9,13 +9,17 @@ import ListMeNu.BaoHanhSanPham;
 import ListMeNu.DangNhap;
 import ListMeNu.DanhMucKhachHang;
 import ListMeNu.QuanLiSanPham;
+import ListMeNu.sanphambanchay;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author nguyenvandat
  */
-public class MainFrame extends javax.swing.JFrame{
+public class MainFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form MainFrame
@@ -23,9 +27,9 @@ public class MainFrame extends javax.swing.JFrame{
     public MainFrame() {
         initComponents();
         setLocationRelativeTo(null);
-        menuNhanVien.setEnabled(false);
-        menuQuanLi.setEnabled(false);
-        
+//        menuNhanVien.setEnabled(false);
+//        menuQuanLi.setEnabled(false);
+
     }
 
     /**
@@ -45,6 +49,8 @@ public class MainFrame extends javax.swing.JFrame{
         menuNhanVien = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem7 = new javax.swing.JMenuItem();
+        jMenuItem8 = new javax.swing.JMenuItem();
         menuQuanLi = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
@@ -85,7 +91,28 @@ public class MainFrame extends javax.swing.JFrame{
         menuNhanVien.add(jMenuItem3);
 
         jMenuItem4.setText("Danh Mục Khách Hàng");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         menuNhanVien.add(jMenuItem4);
+
+        jMenuItem7.setText("Bảo Hành Sản Phẩm");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
+        menuNhanVien.add(jMenuItem7);
+
+        jMenuItem8.setText("Sản Phẩm Bán Chạy");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
+        menuNhanVien.add(jMenuItem8);
 
         menuBar.add(menuNhanVien);
 
@@ -129,6 +156,25 @@ public class MainFrame extends javax.swing.JFrame{
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+
+        sanphambanchay spbc = new sanphambanchay();
+        DesktopPane.add(spbc);
+        spbc.setVisible(true);
+
+
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        DanhMucKhachHang smkh= new DanhMucKhachHang();
+        DesktopPane.add(smkh);
+        smkh.setVisible(true);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -174,6 +220,8 @@ public class MainFrame extends javax.swing.JFrame{
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
     public javax.swing.JMenuBar menuBar;
     public static javax.swing.JMenu menuNhanVien;
     private javax.swing.JMenu menuQuanLi;

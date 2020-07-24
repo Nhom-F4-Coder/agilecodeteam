@@ -287,11 +287,11 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        delete();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+      update();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -309,7 +309,10 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_tblkhachhangMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        add();
+        if (check()) {
+            add();
+        }
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
@@ -354,6 +357,7 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
 
     private void filltotable() {
         String query = "select MAKHACHHANG,HOTENKHACHHANG,GIOITINH,SODIENTHOAI,DIACHI from KHACHHANG";
+        model.setRowCount(0);
         try {
             Statement pr = cnt.createStatement();
             ResultSet rs = pr.executeQuery(query);
@@ -364,10 +368,13 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
                 String sdt = rs.getString(4);
                 String daichi = rs.getString(5);
                 String gioitinh = "";
+                String gt = "";
                 if (rs.getInt(3) == 1) {
                     gioitinh = "nam";
+                    gt = "Mr.";
                 } else if (rs.getInt(3) == 0) {
                     gioitinh = "nữ";
+                    gt = "Ms.";
                 }
                 model.addRow(new Object[]{ma,ten, sdt, daichi, gioitinh});
             }
@@ -390,26 +397,27 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
         //JOptionPane.showMessageDialog(this, model.getValueAt(index, 4));
 
     }
-    private void add(){
+
+    private void add() {
         String sql = "insert into KHACHHANG values(?,?,?,?,?)";
         int gioitinh;
         if (rdonam.isSelected()) {
-            gioitinh =1;
+            gioitinh = 1;
         } else {
-            gioitinh =0;
+            gioitinh = 0;
         }
         try {
             PreparedStatement pre = cnt.prepareStatement(sql);
             pre.setString(1, txtma.getText());
             pre.setString(2, txtname.getText());
-            pre.setInt(3,gioitinh);
+            pre.setInt(3, gioitinh);
             pre.setString(4, txtsdt.getText());
             pre.setString(5, txtdiachi.getText());
             pre.execute();
             pre.close();
         } catch (Exception e) {
         }
-        
+
     }
 
     private void clear() {
@@ -420,31 +428,87 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
         rdonam.setSelected(false);
         rdonu.setSelected(false);
     }
-    private boolean check(){
-        if(txtma.getText().equals("")){
+
+    private void delete() {
+        //index = tblkhachhang.getSelectedRow();
+        String query = "delete from KHACHHANG where MAKHACHHANG = ?";
+        String ma = txtma.getText();
+        try {
+            PreparedStatement stt = cnt.prepareStatement(query);
+            stt.setString(1, ma);
+            stt.execute();
+            stt.close();
+            filltotable();
+            clear();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void update() {
+        String sql = "update KHACHHANG\n"
+                + "set \n"
+                + "HOTENKHACHHANG = ?,\n"
+                + "GIOITINH =?,\n"
+                + "SODIENTHOAI=?,\n"
+                + "DIACHI=?\n"
+                + "where MAKHACHHANG = ?";
+        int gioitinh;
+        if (rdonam.isSelected()) {
+            gioitinh = 1;
+        } else {
+            gioitinh = 0;
+        }
+        try {
+            PreparedStatement pr = cnt.prepareStatement(sql);
+            pr.setString(1, txtname.getText());
+            pr.setInt(2, gioitinh);
+            pr.setString(3, txtsdt.getText());
+            pr.setString(4, txtdiachi.getText());
+            pr.setString(5, txtma.getText());
+            pr.execute();
+            filltotable();
+            pr.close();
+        } catch (Exception e) {
+        }
+    }
+
+    private boolean check() {
+        if (txtma.getText().equals("")) {
             txtma.requestFocus();
             JOptionPane.showMessageDialog(this, "không đc để trống mã khách hàng");
-            return false; 
+            return false;
         }
-        if(txtname.getText().equals("")){
+        if (txtname.getText().equals("")) {
             txtname.requestFocus();
             JOptionPane.showMessageDialog(this, "không đc để trống tên khách hàng");
-            return false; 
+            return false;
         }
-        if(txtsdt.getText().equals("")){
+        if (txtsdt.getText().equals("")) {
             txtsdt.requestFocus();
             JOptionPane.showMessageDialog(this, "không đc để trống số điện thoại khách hàng");
-            return false; 
+            return false;
         }
-        if(txtdiachi.getText().equals("")){
+        String checksdt = "\\d{10}";
+
+        if (!txtsdt.getText().matches(checksdt)) {
+            JOptionPane.showMessageDialog(this, "số điện thoại phải nhập số vs nhập đủ 10 số");
+            return false;
+        }
+
+        if (txtdiachi.getText().equals("")) {
             txtdiachi.requestFocus();
             JOptionPane.showMessageDialog(this, "không đc để trống địa chỉ khách hàng");
-            return false; 
+            return false;
         }
-        if(!rdonam.isSelected() || !rdonu.isSelected()){
+        if (rdonam.isSelected() || rdonu.isSelected()) {
+
+        } else {
             JOptionPane.showMessageDialog(this, "chưa chọn giới tính");
-            return false; 
+            return false;
         }
+
         return true;
     }
 }

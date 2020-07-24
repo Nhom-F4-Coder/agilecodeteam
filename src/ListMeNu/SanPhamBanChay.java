@@ -5,17 +5,42 @@
  */
 package ListMeNu;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
- * @author nguyenvandat
+ * @author DELL
  */
-public class SanPhamBanChay extends javax.swing.JInternalFrame {
+public class sanphambanchay extends javax.swing.JInternalFrame {
 
     /**
-     * Creates new form SanPhamBanChay
+     * Creates new form sanphambanchay
      */
-    public SanPhamBanChay() {
+    Connection cnt;
+    String hosting = "jdbc:sqlserver://localhost\\SQLEXPRESS:1433;databaseName=QUANLIBANHANGDB";
+    String user = "sa";
+    String pass = "123456";
+    DefaultTableModel model;
+    int index;
+
+    public sanphambanchay() {
         initComponents();
+        model = (DefaultTableModel) tblsanpham.getModel();
+        try {
+            connect();
+            JOptionPane.showMessageDialog(this, "kết nối thành công");
+            //filltotable();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "lỗi");
+        }
+
     }
 
     /**
@@ -27,66 +52,61 @@ public class SanPhamBanChay extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        entityManager1 = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory(null).createEntityManager();
-        jLabel1 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        txtngaymua = new javax.swing.JTextField();
+        txtngayhet = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblsanpham = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
 
-        setClosable(true);
-        setIconifiable(true);
-        setMaximizable(true);
-        setResizable(true);
+        jLabel3.setText("Đến Ngày");
 
-        jLabel1.setText("Thống Kê Sản Phẩm Bán Chạy Nhất");
+        jLabel2.setText("Từ Ngày:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblsanpham.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Top", "Tên SP", "Số Lượng Bán Được"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblsanpham);
 
-        jLabel2.setText("Từ Ngày:");
-
-        jLabel3.setText("Đến Ngày");
+        jLabel1.setText("Thống Kê Sản Phẩm Bán Chạy Nhất");
 
         jButton1.setText("Xem");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(30, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtngaymua, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtngayhet, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton1))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 917, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -102,27 +122,95 @@ public class SanPhamBanChay extends javax.swing.JInternalFrame {
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(jButton1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtngaymua, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtngayhet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(164, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        int min = Integer.parseInt(txtngaymua.getText());
+        int max = Integer.parseInt(txtngayhet.getText());
+        try {
+            String query = "select TENSANPHAM,HOADONCHITIET.SOLUONG from  SANPHAM inner join HOADONCHITIET on SANPHAM.MASANPHAM = HOADONCHITIET.MASANPHAM where year(NGAYMUAHANG)   >= ? and year(NGAYMUAHANG) <= ? order by  HOADONCHITIET.SOLUONG desc";
+            PreparedStatement stt = cnt.prepareStatement(query);
+            stt.setInt(1, min);
+            stt.setInt(2, max);
+            //stt.execute();
+            ResultSet rs = stt.executeQuery();
+            int i = 0;
+            model.setRowCount(0);
+            while (rs.next()) {
+                i++;
+                String tensanpham = rs.getString(1);
+                String soluong = rs.getString(2);
+                Object[] row = new Object[]{i, tensanpham, soluong};
+                model.addRow(row);
+                //System.out.println("Top: " +i +"tên: "+ tensanpham + "số lượng: " + soluong);
+                //filltotable();
+            }
+
+           // cnt.close();
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "lỗi k đọc đc");
+        }
+        JOptionPane.showMessageDialog(this, "đã bấm");
+        JOptionPane.showMessageDialog(this, min + " " + max);
+         //JOptionPane.showMessageDialog(this, max);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.persistence.EntityManager entityManager1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTable tblsanpham;
+    private javax.swing.JTextField txtngayhet;
+    private javax.swing.JTextField txtngaymua;
     // End of variables declaration//GEN-END:variables
+    private void connect() {
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            cnt = DriverManager.getConnection(hosting, user, pass);
+        } catch (Exception e) {
+        }
+
+    }
+
+    private void filltotable() {
+        // lệnh truy vấn   
+        try {
+            String sql = "select TENSANPHAM,HOADONCHITIET.SOLUONG \n"
+                    + "from  SANPHAM inner join HOADONCHITIET on SANPHAM.MASANPHAM = HOADONCHITIET.MASANPHAM\n"
+                    + "order by  HOADONCHITIET.SOLUONG desc";
+            // tạo đối tg thực thi lệnh
+            //b4 tạo đối tượng Statement
+            Statement stt = cnt.createStatement();
+            //b5 thi hành câu truy vấn 
+            ResultSet rs = stt.executeQuery(sql);
+            int i = 0;
+
+            while (rs.next()) {
+                i++;
+                String tensanpham = rs.getString(1);
+                String soluong = rs.getString(2);
+                Object[] row = new Object[]{i, tensanpham, soluong};
+                model.addRow(row);
+                // System.out.println("id: " + tensanpham +" " + soluong);
+
+            }
+            // model.addRow(new Object[]{"0","0", "0"});
+
+        } catch (Exception e) {
+        }
+
+    }
 }
