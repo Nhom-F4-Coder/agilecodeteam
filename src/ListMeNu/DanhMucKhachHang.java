@@ -299,7 +299,7 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-
+        timkiem();
 
     }//GEN-LAST:event_jButton5ActionPerformed
 
@@ -414,7 +414,9 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
             pre.setString(4, txtsdt.getText());
             pre.setString(5, txtdiachi.getText());
             pre.execute();
+            
             pre.close();
+            filltotable();
         } catch (Exception e) {
         }
 
@@ -471,6 +473,43 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
             filltotable();
             pr.close();
         } catch (Exception e) {
+        }
+    }
+    private void timkiem(){
+        String query1 = "select MAKHACHHANG,HOTENKHACHHANG,GIOITINH,SODIENTHOAI,DIACHI from KHACHHANG where MAKHACHHANG = ? or HOTENKHACHHANG = ? or SODIENTHOAI =?";
+         String query2 = "select MAKHACHHANG,HOTENKHACHHANG,GIOITINH,SODIENTHOAI,DIACHI from KHACHHANG where MAKHACHHANG = ? or HOTENKHACHHANG = ? or SODIENTHOAI =?";
+         String query3 = "select MAKHACHHANG,HOTENKHACHHANG,GIOITINH,SODIENTHOAI,DIACHI from KHACHHANG where MAKHACHHANG = ? or HOTENKHACHHANG = ? or SODIENTHOAI =?";
+        model.setRowCount(0);
+        String ma1 = txtmatk.getText();
+        String name1 =txtnametk.getText();
+        String sdt1 =txtsdttk.getText();
+        try {
+            PreparedStatement pr = cnt.prepareStatement(query1);
+            
+            pr.setString(1,ma1);
+            pr.setString(2,name1 );
+            pr.setString(3, sdt1);
+            
+            ResultSet rs = pr.executeQuery();
+            while (rs.next()) {
+                String ma = rs.getString(1);
+                String ten = rs.getString(2);
+                String sdt = rs.getString(4);
+                String daichi = rs.getString(5);
+                String gioitinh = "";
+                String gt = "";
+                if (rs.getInt(3) == 1) {
+                    gioitinh = "nam";
+                    gt = "Mr.";
+                } else if (rs.getInt(3) == 0) {
+                    gioitinh = "nữ";
+                    gt = "Ms.";
+                }
+                 model.addRow(new Object[]{ma,ten, sdt, daichi, gioitinh});
+               
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
