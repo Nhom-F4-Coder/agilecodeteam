@@ -11,6 +11,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -36,7 +41,7 @@ public class sanphambanchay extends javax.swing.JInternalFrame {
         try {
             connect();
             JOptionPane.showMessageDialog(this, "kết nối thành công");
-            //filltotable();
+            filltotable();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "lỗi");
         }
@@ -73,7 +78,15 @@ public class sanphambanchay extends javax.swing.JInternalFrame {
             new String [] {
                 "Top", "Tên SP", "Số Lượng Bán Được"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tblsanpham);
 
         jLabel1.setText("Thống Kê Sản Phẩm Bán Chạy Nhất");
@@ -133,35 +146,7 @@ public class sanphambanchay extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        int min = Integer.parseInt(txtngaymua.getText());
-        int max = Integer.parseInt(txtngayhet.getText());
-        try {
-            String query = "select TENSANPHAM,HOADONCHITIET.SOLUONG from  SANPHAM inner join HOADONCHITIET on SANPHAM.MASANPHAM = HOADONCHITIET.MASANPHAM where year(NGAYMUAHANG)   >= ? and year(NGAYMUAHANG) <= ? order by  HOADONCHITIET.SOLUONG desc";
-            PreparedStatement stt = cnt.prepareStatement(query);
-            stt.setInt(1, min);
-            stt.setInt(2, max);
-            //stt.execute();
-            ResultSet rs = stt.executeQuery();
-            int i = 0;
-            model.setRowCount(0);
-            while (rs.next()) {
-                i++;
-                String tensanpham = rs.getString(1);
-                String soluong = rs.getString(2);
-                Object[] row = new Object[]{i, tensanpham, soluong};
-                model.addRow(row);
-                //System.out.println("Top: " +i +"tên: "+ tensanpham + "số lượng: " + soluong);
-                //filltotable();
-            }
-
-           // cnt.close();
-            
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "lỗi k đọc đc");
-        }
-        JOptionPane.showMessageDialog(this, "đã bấm");
-        JOptionPane.showMessageDialog(this, min + " " + max);
-         //JOptionPane.showMessageDialog(this, max);
+        timkiem();
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
@@ -182,9 +167,9 @@ public class sanphambanchay extends javax.swing.JInternalFrame {
             cnt = DriverManager.getConnection(hosting, user, pass);
         } catch (Exception e) {
         }
-
+        
     }
-
+    
     private void filltotable() {
         // lệnh truy vấn   
         try {
@@ -197,7 +182,7 @@ public class sanphambanchay extends javax.swing.JInternalFrame {
             //b5 thi hành câu truy vấn 
             ResultSet rs = stt.executeQuery(sql);
             int i = 0;
-
+            
             while (rs.next()) {
                 i++;
                 String tensanpham = rs.getString(1);
@@ -211,6 +196,49 @@ public class sanphambanchay extends javax.swing.JInternalFrame {
 
         } catch (Exception e) {
         }
+        
+    }
+    
+    private void timkiem() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        Date d1 = null;
+        Date d2 = null;
+        try {
+            d1 = sdf.parse(txtngaymua.getText());
+            d2 = sdf.parse(txtngayhet.getText());
+            try {
+                String query = "select TENSANPHAM,HOADONCHITIET.SOLUONG from  SANPHAM inner join HOADONCHITIET on SANPHAM.MASANPHAM = HOADONCHITIET.MASANPHAM where NGAYMUAHANG between ? and ? order by  HOADONCHITIET.SOLUONG desc";
+                PreparedStatement stt = cnt.prepareStatement(query);
+                stt.setString(1, sdf1.format(d1));
+                stt.setString(2, sdf1.format(d2));
+                //stt.execute();
+                ResultSet rs = stt.executeQuery();
+                int i = 0;
+                model.setRowCount(0);
+                while (rs.next()) {
+                    i++;
+                    String tensanpham = rs.getString(1);
+                    String soluong = rs.getString(2);
+                    Object[] row = new Object[]{i, tensanpham, soluong};
+                    model.addRow(row);
+                    //System.out.println("Top: " +i +"tên: "+ tensanpham + "số lượng: " + soluong);
+                    //filltotable();
+                }
 
+                // cnt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "lỗi k đọc đc");
+               
+            }
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "nhập sai định dạng ngày dd-mm-yyyy");
+            txtngaymua.requestFocus();
+             return;
+        }
+        //JOptionPane.showMessageDialog(this, sdf1.format(d1) + " " + sdf1.format(d2));
+//        
     }
 }

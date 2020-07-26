@@ -547,6 +547,21 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "chưa chọn giới tính");
             return false;
         }
+        String sql = "select MAKHACHHANG from KHACHHANG";
+        String checkma = txtma.getText();
+        try {
+            Statement pr = cnt.createStatement();
+            ResultSet rs = pr.executeQuery(sql);
+            while(rs.next()){
+                if(checkma.equalsIgnoreCase(rs.getString(1))){
+                    JOptionPane.showMessageDialog(this, "mã khách hàng này đã tồn tại");
+                    txtma.requestFocus();
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return true;
     }
