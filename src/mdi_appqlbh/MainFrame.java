@@ -8,6 +8,7 @@ package mdi_appqlbh;
 import ListMeNu.BaoHanhSanPham;
 import ListMeNu.DangNhap;
 import ListMeNu.DanhMucKhachHang;
+import ListMeNu.Hoadonthanhtoan;
 import ListMeNu.QuanLiSanPham;
 import ListMeNu.sanphambanchay;
 import java.sql.SQLException;
@@ -50,6 +51,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
+        jMenuItem9 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
         menuQuanLi = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
@@ -105,6 +107,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         menuNhanVien.add(jMenuItem7);
+
+        jMenuItem9.setText("Hóa Đơn Thanh Toán");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
+        menuNhanVien.add(jMenuItem9);
 
         jMenuItem8.setText("Sản Phẩm Bán Chạy");
         jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
@@ -176,6 +186,12 @@ public class MainFrame extends javax.swing.JFrame {
         smkh.setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        Hoadonthanhtoan hdtt = new Hoadonthanhtoan();
+        DesktopPane.add(hdtt);
+        hdtt.setVisible(true);
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -222,6 +238,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JMenuItem jMenuItem9;
     public javax.swing.JMenuBar menuBar;
     public static javax.swing.JMenu menuNhanVien;
     private javax.swing.JMenu menuQuanLi;
