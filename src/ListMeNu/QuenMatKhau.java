@@ -5,6 +5,16 @@
  */
 package ListMeNu;
 
+import static java.awt.image.ImageObserver.WIDTH;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author nguyenvandat
@@ -14,8 +24,80 @@ public class QuenMatKhau extends javax.swing.JInternalFrame {
     /**
      * Creates new form DangKi
      */
+    Connection conn;
+    private String dbUsername, dbPassword;
+    private String url = "jdbc:sqlserver://localhost:1433;databaseName=QUANLIBANHANGDB";
+    List<TaiKhoan> listTK = new ArrayList<>();
+    String role = "";
+
     public QuenMatKhau() {
         initComponents();
+        this.dbUsername = "sa";
+        this.dbPassword = "sa";
+        ketNoi();
+        for (TaiKhoan x : listTK) {
+            System.out.println(x.toString());
+        }
+    }
+
+    public void ketNoi() {
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            conn = DriverManager.getConnection(url, this.dbUsername, this.dbPassword);
+            JOptionPane.showMessageDialog(this, "Thành Công!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi!");
+        }
+        String query = "Select*from TaiKhoan";
+        try {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                String userName = rs.getString("TAIKHOAN");
+                String passWord = rs.getString("MATKHAU");
+                String Role = rs.getString("CHUCVU");
+                listTK.add(new TaiKhoan(userName, passWord, Role));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update() {
+        if (txtTaiKhoan.getText().length() == 0) {
+            JOptionPane.showMessageDialog(this, "Tài khoản không được để trống!");
+            return;
+        }
+        for (TaiKhoan tk : listTK) {
+            if (tk.getUserName().equalsIgnoreCase(txtTaiKhoan.getText())) {
+                if (txtMatKhau.getText().length() == 0) {
+                    JOptionPane.showMessageDialog(this, "Mật khẩu không được để trống!");
+                    return;
+                }
+                if (txtNhapLai.getText().length() == 0) {
+                    JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu xác nhận!");
+                    return;
+                }
+                if (!txtNhapLai.getText().equalsIgnoreCase(txtMatKhau.getText())) {
+                    JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận phải trùng khớp với mật khẩu!");
+                    return;
+                }
+                try {
+                    String sql = "update TAIKHOAN set MATKHAU=? where TAIKHOAN=?";
+                    PreparedStatement ps = conn.prepareStatement(sql);
+                    ps.setString(1, txtNhapLai.getText());
+                    ps.setString(2, txtTaiKhoan.getText());
+                    ps.execute();
+                    JOptionPane.showMessageDialog(this, "Thành công!");
+                } catch (Exception e) {
+
+                }
+                return;
+
+            }
+        }
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng tên tài khoản!");
+        return;
     }
 
     /**
@@ -27,18 +109,21 @@ public class QuenMatKhau extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField3 = new javax.swing.JTextField();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jPasswordField2 = new javax.swing.JPasswordField();
+        txtTaiKhoan = new javax.swing.JTextField();
+        txtMatKhau = new javax.swing.JPasswordField();
+        txtNhapLai = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
-        jPasswordField1.setEchoChar('*');
+        setClosable(true);
+        setMaximizable(true);
 
-        jPasswordField2.setEchoChar('*');
+        txtMatKhau.setEchoChar('*');
+
+        txtNhapLai.setEchoChar('*');
 
         jLabel4.setText("Tài khoản:");
 
@@ -47,6 +132,11 @@ public class QuenMatKhau extends javax.swing.JInternalFrame {
         jLabel7.setText("Nhập lại:");
 
         jButton1.setText("Đồng Ý");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Quên Mật Khẩu");
 
@@ -55,52 +145,59 @@ public class QuenMatKhau extends javax.swing.JInternalFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(112, 112, 112)
+                .addGap(129, 129, 129)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(41, 41, 41)
+                        .addComponent(txtTaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel7))
                         .addGap(45, 45, 45)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(149, 149, 149))
+                            .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNhapLai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1))))
+                .addContainerGap(242, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(282, 282, 282)
+                .addComponent(jLabel1)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jPasswordField1, jPasswordField2, jTextField3});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {txtMatKhau, txtNhapLai, txtTaiKhoan});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addGap(114, 114, 114)
                 .addComponent(jLabel1)
-                .addGap(40, 40, 40)
+                .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNhapLai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addContainerGap(138, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        update();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -109,8 +206,8 @@ public class QuenMatKhau extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JPasswordField jPasswordField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JPasswordField txtMatKhau;
+    private javax.swing.JPasswordField txtNhapLai;
+    private javax.swing.JTextField txtTaiKhoan;
     // End of variables declaration//GEN-END:variables
 }
