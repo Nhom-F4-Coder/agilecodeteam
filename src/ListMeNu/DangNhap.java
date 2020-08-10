@@ -29,16 +29,16 @@ public class DangNhap extends javax.swing.JInternalFrame {
     private String dbUsername, dbPassword;
     private String url = "jdbc:sqlserver://localhost:1433;databaseName=QUANLIBANHANGDB";
     List<TaiKhoan> listTK = new ArrayList<>();
-    String role ="";
+    String role = "";
 
     public DangNhap() {
         initComponents();
         this.dbUsername = "sa";
         this.dbPassword = "123456";
         ketNoi();
-        for(TaiKhoan x:listTK){
-            System.out.println(x.toString());
-        }
+//        for(TaiKhoan x:listTK){
+//            System.out.println(x.toString());
+//        }
     }
 
     public void ketNoi() {
@@ -63,45 +63,47 @@ public class DangNhap extends javax.swing.JInternalFrame {
             e.printStackTrace();
         }
     }
-    
-   
 
     public void DangNhap() {
-        if (rdoUser.isSelected()) {
-            role = "User";
-        } else if (rdoAdmin.isSelected()) {
-            role = "Admin";
-        }
-        if(txtTaiKhoan.getText().length()==0){
+       
+        if (txtTaiKhoan.getText().length() == 0) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập tên tài khoản!");
             return;
         }
-        if(txtMatKhau.getText().length()==0){
+        if (txtMatKhau.getText().length() == 0) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!");
             return;
         }
 
-        for(TaiKhoan tk:listTK){
+        for (TaiKhoan tk : listTK) {
             System.out.println(tk.toString());
-            
+
         }
         try {
-            for(TaiKhoan tk:listTK){
-                if(txtTaiKhoan.getText().equalsIgnoreCase(tk.getUserName())&&txtMatKhau.getText().equalsIgnoreCase(tk.getPassWord())&&tk.getChucVu().equals(role)&&tk.getChucVu().equalsIgnoreCase("User")){
-                    MainFrame.menuNhanVien.setEnabled(true);
+            boolean check = false;
+            for (TaiKhoan tk : listTK) {
+                if (txtTaiKhoan.getText().equalsIgnoreCase(tk.getUserName()) && txtMatKhau.getText().equals(tk.getPassWord())) {
+                    check = true;
+                    if (tk.getChucVu().equalsIgnoreCase("user")) {
+                        MainFrame.menuNhanVien.setEnabled(true);
 //                    JOptionPane.showMessageDialog(this, "Đăng nhập thành công với nhân viên!");
-                    MainFrame.menuNhanVien.setEnabled(true);
-                    dispose();
+                        dispose();
+                    }
+                    if (tk.getChucVu().equalsIgnoreCase("admin")) {
+                        MainFrame.menuQuanLi.setEnabled(true);
+//                    JOptionPane.showMessageDialog(this, "Đăng nhập thành công với nhân viên!");
+                        dispose();
+                    }
+                    
                     return;
-                }else if(txtTaiKhoan.getText().equalsIgnoreCase(tk.getUserName())&&txtMatKhau.getText().equalsIgnoreCase(tk.getPassWord())&&tk.getChucVu().equals(role)&&tk.getChucVu().equalsIgnoreCase("Admin")){
-                    MainFrame.DesktopPane.setEnabled(true);
-                    MainFrame.menuQuanLi.setEnabled(false);
-//                    JOptionPane.showMessageDialog(this, "Đăng nhập thành công với quản lí!");
-                    dispose();
-                    return;
-                }     
+                }
+
+              
             }
-            JOptionPane.showMessageDialog(this,"Sai tài khoản hoặc mật khẩu, hoặc chức vụ không chính xác" );
+            if (!check) {
+                JOptionPane.showMessageDialog(this, "sai tai khoan hoac mat khau");
+            }
+//            JOptionPane.showMessageDialog(this,"Sai tài khoản hoặc mật khẩu, hoặc chức vụ không chính xác" );
             return;
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,8 +133,6 @@ public class DangNhap extends javax.swing.JInternalFrame {
         jLabel1 = new javax.swing.JLabel();
         txtTaiKhoan = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        rdoUser = new javax.swing.JRadioButton();
-        rdoAdmin = new javax.swing.JRadioButton();
         btnDangKi = new javax.swing.JButton();
         cboGhiNho = new javax.swing.JCheckBox();
         btnDangNhap = new javax.swing.JButton();
@@ -148,13 +148,6 @@ public class DangNhap extends javax.swing.JInternalFrame {
         jLabel1.setText("Tài Khoản:");
 
         jLabel2.setText("Mật Khẩu:");
-
-        buttonGroup1.add(rdoUser);
-        rdoUser.setSelected(true);
-        rdoUser.setText("User");
-
-        buttonGroup1.add(rdoAdmin);
-        rdoAdmin.setText("Admin");
 
         btnDangKi.setText("Đăng Kí");
         btnDangKi.addActionListener(new java.awt.event.ActionListener() {
@@ -191,11 +184,6 @@ public class DangNhap extends javax.swing.JInternalFrame {
                     .addComponent(jLabel2))
                 .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(rdoUser)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rdoAdmin))
                     .addComponent(txtTaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -219,11 +207,7 @@ public class DangNhap extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rdoUser)
-                    .addComponent(rdoAdmin))
-                .addGap(16, 16, 16)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cboGhiNho)
                     .addComponent(jButton1))
@@ -231,7 +215,7 @@ public class DangNhap extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDangNhap)
                     .addComponent(btnDangKi))
-                .addGap(131, 131, 131))
+                .addGap(157, 157, 157))
         );
 
         pack();
@@ -255,7 +239,7 @@ public class DangNhap extends javax.swing.JInternalFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         MainFrame.DesktopPane.removeAll();
-        QuenMatKhau qmk=new QuenMatKhau();
+        QuenMatKhau qmk = new QuenMatKhau();
         MainFrame.DesktopPane.add(qmk);
         qmk.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -269,8 +253,6 @@ public class DangNhap extends javax.swing.JInternalFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JRadioButton rdoAdmin;
-    private javax.swing.JRadioButton rdoUser;
     private javax.swing.JPasswordField txtMatKhau;
     private javax.swing.JTextField txtTaiKhoan;
     // End of variables declaration//GEN-END:variables
