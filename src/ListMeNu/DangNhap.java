@@ -5,6 +5,14 @@
  */
 package ListMeNu;
 
+import java.awt.Cursor;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import mdi_appqlbh.MainFrame;
 
@@ -12,13 +20,102 @@ import mdi_appqlbh.MainFrame;
  *
  * @author nguyenvandat
  */
-public class DangNhap extends javax.swing.JInternalFrame{
+public class DangNhap extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form DangNhap
      */
+    Connection conn;
+    private String dbUsername, dbPassword;
+    private String url = "jdbc:sqlserver://localhost:1433;databaseName=QUANLIBANHANGDB";
+    List<TaiKhoan> listTK = new ArrayList<>();
+    String role ="";
+
     public DangNhap() {
         initComponents();
+        this.dbUsername = "sa";
+        this.dbPassword = "123456";
+        ketNoi();
+        for(TaiKhoan x:listTK){
+            System.out.println(x.toString());
+        }
+    }
+
+    public void ketNoi() {
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            conn = DriverManager.getConnection(url, this.dbUsername, this.dbPassword);
+            JOptionPane.showMessageDialog(this, "Thành Công!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi!");
+        }
+        String query = "Select*from TaiKhoan";
+        try {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                String userName = rs.getString("TAIKHOAN");
+                String passWord = rs.getString("MATKHAU");
+                String Role = rs.getString("CHUCVU");
+                listTK.add(new TaiKhoan(userName, passWord, Role));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+   
+
+    public void DangNhap() {
+        if (rdoUser.isSelected()) {
+            role = "User";
+        } else if (rdoAdmin.isSelected()) {
+            role = "Admin";
+        }
+        if(txtTaiKhoan.getText().length()==0){
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên tài khoản!");
+            return;
+        }
+        if(txtMatKhau.getText().length()==0){
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu!");
+            return;
+        }
+
+        for(TaiKhoan tk:listTK){
+            System.out.println(tk.toString());
+            
+        }
+        try {
+            for(TaiKhoan tk:listTK){
+                if(txtTaiKhoan.getText().equalsIgnoreCase(tk.getUserName())&&txtMatKhau.getText().equalsIgnoreCase(tk.getPassWord())&&tk.getChucVu().equals(role)&&tk.getChucVu().equalsIgnoreCase("User")){
+                    MainFrame.menuNhanVien.setEnabled(true);
+//                    JOptionPane.showMessageDialog(this, "Đăng nhập thành công với nhân viên!");
+                    MainFrame.menuNhanVien.setEnabled(true);
+                    dispose();
+                    return;
+                }else if(txtTaiKhoan.getText().equalsIgnoreCase(tk.getUserName())&&txtMatKhau.getText().equalsIgnoreCase(tk.getPassWord())&&tk.getChucVu().equals(role)&&tk.getChucVu().equalsIgnoreCase("Admin")){
+                    MainFrame.DesktopPane.setEnabled(true);
+                    MainFrame.menuQuanLi.setEnabled(false);
+//                    JOptionPane.showMessageDialog(this, "Đăng nhập thành công với quản lí!");
+                    dispose();
+                    return;
+                }     
+            }
+            JOptionPane.showMessageDialog(this,"Sai tài khoản hoặc mật khẩu, hoặc chức vụ không chính xác" );
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        for(TaiKhoan tk:listTK){
+//            if(txtTaiKhoan.getText().equalsIgnoreCase(tk.getUserName()) && txtMatKhau.getText().equals(tk.getPassWord()) && role.equals("Admin")){
+//                MainFrame.menuNhanVien.setEnabled(true);
+//                JOptionPane.showConfirmDialog(this, "Login Quan li thanh cong");
+//                return;
+//            }else{
+//                JOptionPane.showMessageDialog(this, "Sai tai khoan hoac mat khau!");
+//                return;
+//            }    
+//        }
     }
 
     /**
@@ -36,42 +133,50 @@ public class DangNhap extends javax.swing.JInternalFrame{
         jLabel2 = new javax.swing.JLabel();
         rdoUser = new javax.swing.JRadioButton();
         rdoAdmin = new javax.swing.JRadioButton();
-        jButton1 = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jLabel3 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        btnDangKi = new javax.swing.JButton();
+        cboGhiNho = new javax.swing.JCheckBox();
+        btnDangNhap = new javax.swing.JButton();
         txtMatKhau = new javax.swing.JPasswordField();
+        jButton1 = new javax.swing.JButton();
 
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
         setResizable(true);
+        setPreferredSize(new java.awt.Dimension(689, 495));
 
         jLabel1.setText("Tài Khoản:");
 
         jLabel2.setText("Mật Khẩu:");
 
         buttonGroup1.add(rdoUser);
+        rdoUser.setSelected(true);
         rdoUser.setText("User");
 
         buttonGroup1.add(rdoAdmin);
         rdoAdmin.setText("Admin");
 
-        jButton1.setText("Đăng Kí");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnDangKi.setText("Đăng Kí");
+        btnDangKi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnDangKiActionPerformed(evt);
             }
         });
 
-        jCheckBox1.setText("Ghi nhớ?");
+        cboGhiNho.setText("Ghi nhớ?");
 
-        jLabel3.setText("Quên Mật Khẩu");
-
-        jButton2.setText("Đăng Nhập");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnDangNhap.setText("Đăng Nhập");
+        btnDangNhap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnDangNhapActionPerformed(evt);
+            }
+        });
+
+        jButton1.setBackground(new java.awt.Color(153, 255, 255));
+        jButton1.setText("Quên mật khẩu?");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -80,32 +185,33 @@ public class DangNhap extends javax.swing.JInternalFrame{
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(89, 89, 89)
+                .addGap(146, 146, 146)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2))
                 .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jCheckBox1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
                         .addComponent(rdoUser)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(rdoAdmin))
                     .addComponent(txtTaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(124, Short.MAX_VALUE))
+                    .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnDangNhap)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDangKi, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cboGhiNho)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)))
+                .addContainerGap(194, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(69, 69, 69)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(146, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtTaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -119,50 +225,50 @@ public class DangNhap extends javax.swing.JInternalFrame{
                     .addComponent(rdoAdmin))
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jLabel3))
+                    .addComponent(cboGhiNho)
+                    .addComponent(jButton1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1))
-                .addContainerGap(71, Short.MAX_VALUE))
+                    .addComponent(btnDangNhap)
+                    .addComponent(btnDangKi))
+                .addGap(131, 131, 131))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnDangKiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangKiActionPerformed
         // TODO add your handling code here:
+//       DangNhap dn=new DangNhap();
+//       dn.setVisible(false);
+        MainFrame.DesktopPane.removeAll();
         DangKi dk = new DangKi();
         dk.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+        MainFrame.DesktopPane.add(dk);
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnDangKiActionPerformed
+
+    private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
+        DangNhap();
+    }//GEN-LAST:event_btnDangNhapActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-//        MainFrame mainfram;
-//        mainfram.menuNhanVien.setEnabled(true);
-   
-//        if (txtTaiKhoan.getText().equalsIgnoreCase("OK") && txtMatKhau.getText().equals("1")) {
-//            if(rdoUser.isSelected()){
-//                JOptionPane.showMessageDialog(this, "User");
-//                MainFrame mainfram = new MainFrame();
-//                mainfram.menuNhanVien.setEnabled(true);
-//            }
-//            if(rdoAdmin.isSelected()){
-//                JOptionPane.showMessageDialog(this, "Admin");
-//            }
-//        }
-    }//GEN-LAST:event_jButton2ActionPerformed
+        MainFrame.DesktopPane.removeAll();
+        QuenMatKhau qmk=new QuenMatKhau();
+        MainFrame.DesktopPane.add(qmk);
+        qmk.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDangKi;
+    private javax.swing.JButton btnDangNhap;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JCheckBox cboGhiNho;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JRadioButton rdoAdmin;
     private javax.swing.JRadioButton rdoUser;
     private javax.swing.JPasswordField txtMatKhau;

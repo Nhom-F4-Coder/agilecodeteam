@@ -5,6 +5,20 @@
  */
 package ListMeNu;
 
+import java.sql.DriverManager;
+import javax.swing.JFrame;
+import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
+//import 
+
 /**
  *
  * @author nguyenvandat
@@ -16,6 +30,47 @@ public class ThongkeDoanhThu2 extends javax.swing.JInternalFrame {
      */
     public ThongkeDoanhThu2() {
         initComponents();
+        LineChart_AWT chart = new LineChart_AWT(
+                "Biểu đồ",
+                "Thống kê doanh thu");
+
+        chart.pack();
+        RefineryUtilities.centerFrameOnScreen(chart);
+        chart.setVisible(true);
+    }
+
+    public class LineChart_AWT extends ApplicationFrame {
+
+        public LineChart_AWT(String applicationTitle, String chartTitle) {
+            super(applicationTitle);
+            JFreeChart lineChart = ChartFactory.createLineChart(
+                    chartTitle,
+                    "Years", "Money",
+                    createDataset(),
+                    PlotOrientation.VERTICAL,
+                    true, true, false);
+
+            ChartPanel chartPanel = new ChartPanel(lineChart);
+            chartPanel.setPreferredSize(new java.awt.Dimension(800, 400));
+            setContentPane(chartPanel);
+        }
+
+        private DefaultCategoryDataset createDataset() {
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            dataset.addValue(1000, "Iphone 7", "2016");
+            dataset.addValue(6000, "Iphone 7", "2017");
+            dataset.addValue(1100, "Iphone 7", "2018");
+            dataset.addValue(1200, "Iphone 7", "2019");
+            dataset.addValue(2420, "Iphone 7", "2020");
+            dataset.addValue(1000, "Iphone 7", "2020");
+            dataset.addValue(1600, "Iphone 8", "2016");
+            dataset.addValue(2300, "Iphone 8", "2017");
+            dataset.addValue(4600, "Iphone 8", "2018");
+            dataset.addValue(6400, "Iphone 8", "2019");
+            dataset.addValue(2020, "Iphone 8", "2020");
+            dataset.addValue(9000, "Iphone 8", "2020");
+            return dataset;
+        }
     }
 
     /**
@@ -47,6 +102,11 @@ public class ThongkeDoanhThu2 extends javax.swing.JInternalFrame {
         jLabel3.setText("Đến Ngày");
 
         jButton1.setText("Xem");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Biểu Đồ");
 
@@ -103,6 +163,10 @@ public class ThongkeDoanhThu2 extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -5,6 +5,15 @@
  */
 package ListMeNu;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import mdi_appqlbh.MainFrame;
+
 /**
  *
  * @author nguyenvandat
@@ -14,10 +23,116 @@ public class DangKi extends javax.swing.JInternalFrame {
     /**
      * Creates new form QuenMatKhau
      */
+    ArrayList<TaiKhoan> listTK;
+    Connection conn;
+    String url="jdbc:sqlserver://localhost:1433;databaseName=QUANLIBANHANGDB";
+    String dbPassword,dbUsername;
     public DangKi() {
         initComponents();
+        this.dbUsername="sa";
+        this.dbPassword="sa";
+        ketNoi();
+        this.listTK=this.fetchList();
     }
 
+    public void ketNoi(){
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver") ;
+            conn = DriverManager.getConnection(url,this.dbUsername,this.dbPassword);
+            JOptionPane.showMessageDialog(this, "Success!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi!");
+        }       
+    }
+     protected ArrayList<TaiKhoan> fetchList() {
+        ArrayList<TaiKhoan> result = new ArrayList<>();
+        try {
+            conn = DriverManager.getConnection(url, this.dbUsername, this.dbPassword);
+
+            Statement statement = conn.createStatement();
+
+            String sql = "Select*from TAIKHOAN";
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                String taiKhoan=resultSet.getString("TAIKHOAN");
+                String matKhau=resultSet.getString("MATKHAU");
+                String chucVu=resultSet.getString("CHUCVU");
+                result.add(new TaiKhoan(taiKhoan,matKhau,chucVu));
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy driver tương thích");
+        }
+
+        return result;
+
+    }
+    private void add() {
+        String sql = "insert into TAIKHOAN values(?,?,?,?,?)";
+        String chucVu="";
+        if (rdoUser.isSelected()) {
+            chucVu ="User";
+        } else if(rdoAdmin.isSelected()) {
+            chucVu ="Admin";
+        }
+        
+        if(txtHoTen.getText().length()==0){
+                JOptionPane.showMessageDialog(this, "Tên không được để trống!");
+                return;
+        }
+         
+        if(txtSoDienThoai.getText().length()==0){
+            JOptionPane.showMessageDialog(this, "Số điện thoại không được để trống!");
+            return;
+        }
+        String sdt= "\\d{10}";
+        if(!txtSoDienThoai.getText().matches(sdt)){
+            JOptionPane.showMessageDialog(this, "Số điện thoại phải đúng định dạng!");
+            return;
+        }
+        if(txtTaiKhoan.getText().length()==0){
+            JOptionPane.showMessageDialog(this,"Tài khoản không được để trống !" );
+            return;
+        }
+        for(TaiKhoan tk:listTK){
+            if(txtTaiKhoan.getText().equals(tk.getUserName())){
+                JOptionPane.showMessageDialog(this, "Tài khoản này đã tồn tại!");
+                return;
+            }
+        }
+        if(txtMatKhau.getText().length()==0){
+            JOptionPane.showMessageDialog(this, "Mật khẩu không được để trống!");
+            return;
+        }
+        
+        if(txtNhapLai.getText().length()==0){
+            JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không được để trống!");
+            return;
+        }
+        
+        if(!txtNhapLai.getText().equals(txtMatKhau.getText())){
+            JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không giống với mật khẩu! Vui lòng nhập lại!");
+            return;
+        }
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, txtTaiKhoan.getText());
+            pre.setString(2, txtMatKhau.getText());
+            pre.setString(3, txtHoTen.getText());
+            pre.setString(4, txtSoDienThoai.getText());
+            pre.setString(5, chucVu);
+            pre.execute();           
+            pre.close();
+            JOptionPane.showMessageDialog(this, "Dang ki thanh cong!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Loi!");
+        }
+        DangNhap dn=new DangNhap();
+        MainFrame.DesktopPane.removeAll();
+        MainFrame.DesktopPane.add(dn);
+        dn.setVisible(true);
+        
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -27,21 +142,26 @@ public class DangKi extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jPasswordField2 = new javax.swing.JPasswordField();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        txtHoTen = new javax.swing.JTextField();
+        txtSoDienThoai = new javax.swing.JTextField();
+        txtTaiKhoan = new javax.swing.JTextField();
+        txtMatKhau = new javax.swing.JPasswordField();
+        txtNhapLai = new javax.swing.JPasswordField();
+        rdoUser = new javax.swing.JRadioButton();
+        rdoAdmin = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
 
         jLabel1.setText("Họ Tên:");
 
@@ -55,17 +175,30 @@ public class DangKi extends javax.swing.JInternalFrame {
 
         jLabel7.setText("Nhập lại:");
 
-        jPasswordField1.setEchoChar('*');
+        txtMatKhau.setEchoChar('*');
 
-        jPasswordField2.setEchoChar('*');
+        txtNhapLai.setEchoChar('*');
 
-        jRadioButton1.setText("User");
+        buttonGroup1.add(rdoUser);
+        rdoUser.setSelected(true);
+        rdoUser.setText("User");
 
-        jRadioButton2.setText("Admin");
+        buttonGroup1.add(rdoAdmin);
+        rdoAdmin.setText("Admin");
 
         jButton1.setText("Đăng Kí");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Đăng Nhập");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -77,7 +210,7 @@ public class DangKi extends javax.swing.JInternalFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(41, 41, 41)
-                        .addComponent(jTextField3))
+                        .addComponent(txtTaiKhoan))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -87,20 +220,20 @@ public class DangKi extends javax.swing.JInternalFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jTextField1)
-                            .addComponent(jTextField2)))
+                            .addComponent(txtHoTen)
+                            .addComponent(txtSoDienThoai)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel7))
                         .addGap(45, 45, 45)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPasswordField1)
-                            .addComponent(jPasswordField2)
+                            .addComponent(txtMatKhau)
+                            .addComponent(txtNhapLai)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jRadioButton1)
+                                .addComponent(rdoUser)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButton2))
+                                .addComponent(rdoAdmin))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -118,32 +251,32 @@ public class DangKi extends javax.swing.JInternalFrame {
                 .addGap(44, 44, 44)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtHoTen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtSoDienThoai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNhapLai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2))
+                    .addComponent(rdoUser)
+                    .addComponent(rdoAdmin))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
-                .addContainerGap(88, Short.MAX_VALUE))
+                .addContainerGap(92, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jButton1, jButton2});
@@ -151,8 +284,19 @@ public class DangKi extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+       
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        add();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -161,12 +305,12 @@ public class DangKi extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JPasswordField jPasswordField2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JRadioButton rdoAdmin;
+    private javax.swing.JRadioButton rdoUser;
+    private javax.swing.JTextField txtHoTen;
+    private javax.swing.JPasswordField txtMatKhau;
+    private javax.swing.JPasswordField txtNhapLai;
+    private javax.swing.JTextField txtSoDienThoai;
+    private javax.swing.JTextField txtTaiKhoan;
     // End of variables declaration//GEN-END:variables
 }

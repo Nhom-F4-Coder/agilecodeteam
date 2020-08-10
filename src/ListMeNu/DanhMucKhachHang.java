@@ -108,6 +108,24 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
         txtdiachi.setRows(5);
         jScrollPane1.setViewportView(txtdiachi);
 
+        txtmatk.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtmatkKeyReleased(evt);
+            }
+        });
+
+        txtnametk.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtnametkKeyReleased(evt);
+            }
+        });
+
+        txtsdttk.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtsdttkKeyReleased(evt);
+            }
+        });
+
         buttonGroup1.add(rdonam);
         rdonam.setText("Nam");
 
@@ -236,7 +254,7 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(52, 52, 52)
+                .addGap(58, 58, 58)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -280,7 +298,7 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
                     .addComponent(jButton5))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(112, Short.MAX_VALUE))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
 
         pack();
@@ -314,6 +332,18 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
         }
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtmatkKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtmatkKeyReleased
+         timkiem();
+    }//GEN-LAST:event_txtmatkKeyReleased
+
+    private void txtnametkKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtnametkKeyReleased
+         timkiem();
+    }//GEN-LAST:event_txtnametkKeyReleased
+
+    private void txtsdttkKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtsdttkKeyReleased
+        timkiem();
+    }//GEN-LAST:event_txtsdttkKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -462,6 +492,12 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
         } else {
             gioitinh = 0;
         }
+        String gt="";
+        if (rdonam.isSelected()) {
+            gt = "nam";
+        } else {
+            gt = "nữ";
+        }
         try {
             PreparedStatement pr = cnt.prepareStatement(sql);
             pr.setString(1, txtname.getText());
@@ -472,25 +508,33 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
             pr.execute();
             filltotable();
             pr.close();
+            
+            model.setValueAt(txtma.getText(), index, 0);
+            model.setValueAt(txtname.getText(), index, 1);
+            model.setValueAt(txtsdt.getText(), index, 2);
+            model.setValueAt(txtdiachi.getText(), index,3);
+            model.setValueAt(gt, index, 4);
         } catch (Exception e) {
         }
+        
     }
     private void timkiem(){
-        String query1 = "select MAKHACHHANG,HOTENKHACHHANG,GIOITINH,SODIENTHOAI,DIACHI from KHACHHANG where MAKHACHHANG = ? or HOTENKHACHHANG = ? or SODIENTHOAI =?";
-         String query2 = "select MAKHACHHANG,HOTENKHACHHANG,GIOITINH,SODIENTHOAI,DIACHI from KHACHHANG where MAKHACHHANG = ? or HOTENKHACHHANG = ? or SODIENTHOAI =?";
-         String query3 = "select MAKHACHHANG,HOTENKHACHHANG,GIOITINH,SODIENTHOAI,DIACHI from KHACHHANG where MAKHACHHANG = ? or HOTENKHACHHANG = ? or SODIENTHOAI =?";
+     String query = "select MAKHACHHANG,HOTENKHACHHANG,GIOITINH,SODIENTHOAI,DIACHI from KHACHHANG where MAKHACHHANG like'%" + txtmatk.getText() + "%' and HOTENKHACHHANG like '%" + txtnametk.getText() + "%' and SODIENTHOAI like '%" + txtsdttk.getText() + "%'";  
+
         model.setRowCount(0);
         String ma1 = txtmatk.getText();
         String name1 =txtnametk.getText();
         String sdt1 =txtsdttk.getText();
+        //if(txtsdttk.getText().isEmpty()){sdt1 = "sadasda";}
+        System.out.println("ma: "+ ma1 +" "+ name1 + " "+sdt1);
         try {
-            PreparedStatement pr = cnt.prepareStatement(query1);
-            
-            pr.setString(1,ma1);
-            pr.setString(2,name1 );
-            pr.setString(3, sdt1);
-            
-            ResultSet rs = pr.executeQuery();
+//            PreparedStatement pr = cnt.prepareStatement();
+                Statement stm = cnt.createStatement();
+//            pr.setString(1,ma1);
+//            pr.setString(2,name1 );
+//            pr.setString(3, sdt1);
+//            pr.execute();
+            ResultSet rs = stm.executeQuery(query);
             while (rs.next()) {
                 String ma = rs.getString(1);
                 String ten = rs.getString(2);
@@ -511,6 +555,7 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     private boolean check() {
@@ -547,6 +592,7 @@ public class DanhMucKhachHang extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "chưa chọn giới tính");
             return false;
         }
+        
         String sql = "select MAKHACHHANG from KHACHHANG";
         String checkma = txtma.getText();
         try {

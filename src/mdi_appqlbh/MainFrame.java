@@ -8,9 +8,13 @@ package mdi_appqlbh;
 import ListMeNu.BaoHanhSanPham;
 import ListMeNu.DangNhap;
 import ListMeNu.DanhMucKhachHang;
+import ListMeNu.HoaDon;
 import ListMeNu.Hoadonthanhtoan;
 import ListMeNu.QuanLiSanPham;
+import ListMeNu.ThongKeDoanhThu1;
+import ListMeNu.ThongkeDoanhThu2;
 import ListMeNu.sanphambanchay;
+import ListMeNu.showsanpham;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,8 +32,8 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
         setLocationRelativeTo(null);
-//        menuNhanVien.setEnabled(false);
-//        menuQuanLi.setEnabled(false);
+        menuNhanVien.setEnabled(false);
+        menuQuanLi.setEnabled(false);
 
     }
 
@@ -48,12 +52,12 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         menuNhanVien = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
         menuQuanLi = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
 
@@ -83,14 +87,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         menuNhanVien.setText("Nhân Viên");
         menuNhanVien.setToolTipText("");
-
-        jMenuItem3.setText("Quản Lí Sản Phẩm");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
-        menuNhanVien.add(jMenuItem3);
 
         jMenuItem4.setText("Danh Mục Khách Hàng");
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
@@ -128,10 +124,28 @@ public class MainFrame extends javax.swing.JFrame {
 
         menuQuanLi.setText("Quản Lí");
 
+        jMenuItem3.setText("Quản Lí Sản Phẩm");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        menuQuanLi.add(jMenuItem3);
+
         jMenuItem5.setText("Thống Kê Doanh Thu");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
         menuQuanLi.add(jMenuItem5);
 
         jMenuItem6.setText("Biểu Đồ");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
         menuQuanLi.add(jMenuItem6);
 
         menuBar.add(menuQuanLi);
@@ -142,7 +156,7 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(DesktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1001, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(DesktopPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1079, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -155,42 +169,62 @@ public class MainFrame extends javax.swing.JFrame {
     private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenu1MouseClicked
-
+ DangNhap dn;
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        DangNhap dn = new DangNhap();
+         dn = new DangNhap();
         DesktopPane.add(dn);
         dn.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
-
+QuanLiSanPham qlsp;
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        // TODO add your handling code here:
+         qlsp = new QuanLiSanPham();
+        DesktopPane.add(qlsp);
+        qlsp.setVisible(true);
+        
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        // TODO add your handling code here:
+        BaoHanhSanPham bhsp = new BaoHanhSanPham();
+        DesktopPane.add(bhsp);
+        bhsp.setVisible(true);
     }//GEN-LAST:event_jMenuItem7ActionPerformed
-
+sanphambanchay spbc;
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
 
-        sanphambanchay spbc = new sanphambanchay();
+         spbc = new sanphambanchay();
         DesktopPane.add(spbc);
         spbc.setVisible(true);
 
 
     }//GEN-LAST:event_jMenuItem8ActionPerformed
-
+DanhMucKhachHang smkh;
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        DanhMucKhachHang smkh= new DanhMucKhachHang();
+         smkh= new DanhMucKhachHang();
         DesktopPane.add(smkh);
         smkh.setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
-
+HoaDon hd;
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        Hoadonthanhtoan hdtt = new Hoadonthanhtoan();
-        DesktopPane.add(hdtt);
-        hdtt.setVisible(true);
+
+        
+         hd = new HoaDon();
+        DesktopPane.add(hd);
+        hd.setVisible(true);
+        
     }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        ThongKeDoanhThu1 tk = new ThongKeDoanhThu1();
+        DesktopPane.add(tk);
+        tk.setVisible(true);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+//         ThongkeDoanhThu2 tk2 = new ThongkeDoanhThu2();
+//         DesktopPane.add(tk2);
+//         tk2.setVisible(true);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -241,6 +275,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem9;
     public javax.swing.JMenuBar menuBar;
     public static javax.swing.JMenu menuNhanVien;
-    private javax.swing.JMenu menuQuanLi;
+    public static javax.swing.JMenu menuQuanLi;
     // End of variables declaration//GEN-END:variables
 }
